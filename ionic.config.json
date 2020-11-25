@@ -1,0 +1,7 @@
+{
+  "name": "wine_shazam",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

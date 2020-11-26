@@ -16,19 +16,24 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-
-  <!--ion-card vertical="top" horizontal="center">  
-    <ion-card-content >
-      <ion-icon name="person-circle-outline" horizontal="right"></ion-icon>
-    </ion-card-content>
-  </ion-card-->
-
+  
   <img *ngIf="takenPicture" id="taken-picture-img" [src]="takenPicture" alt="photo">
 
+  <ion-card *ngIf="workerReady && (captureProgress > 0)">
+    <ion-card-header>
+      <ion-card-title>
+        Capture progress: {{ captureProgress }}%
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      {{ ocrResult }}
+    </ion-card-content>
+  </ion-card>
 
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button (click)="takePicture()">
-      <ion-icon name="camera"></ion-icon>
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed" > <!-- enable only when worker is ready-->
+    <ion-fab-button (click)="takePicture()" [disabled]="!workerReady">
+      <ion-icon name="camera" *ngIf="workerReady"></ion-icon>
+      <img id="camera-loading-img" src="assets/loading_horizontal_dot.gif" alt="loading" *ngIf="!workerReady">
     </ion-fab-button>
   </ion-fab>
 

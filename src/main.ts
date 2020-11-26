@@ -10,3 +10,7 @@ if (environment.production) {
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.log(err));
+
+/*browser camera use modules*/
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+defineCustomElements(window);

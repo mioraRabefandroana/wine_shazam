@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">wine_shazam</string>
+    <string name="title_activity_main">wine_shazam</string>
+    <string name="package_name">my.wine_shazam.app</string>
+    <string name="custom_url_scheme">my.wine_shazam.app</string>
+</resources>

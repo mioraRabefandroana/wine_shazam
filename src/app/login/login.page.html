@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon name="arrow-back-outline" size="medium"  ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    
+    <ion-title horizontal="center">login</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content> 
+
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <!--ion-label>username</ion-label-->
+        <ion-icon class="login-label-icon" name="person-outline" size="medium"></ion-icon>
+        <ion-input type="email" placeholder="username"></ion-input>
+      </ion-item>
+      <ion-item>
+        <!--ion-label>password</ion-label-->
+        <ion-icon class="login-label-icon" name="lock-closed-outline" size="medium"></ion-icon>
+        <ion-input type="password" placeholder="password"></ion-input>
+      </ion-item>
+
+      <ion-button color="primary" expand="full">log in</ion-button>
+      <ion-button color="secondary" expand="full">create account</ion-button>
+      
+    </ion-card-content>
+  </ion-card>
+</ion-content>

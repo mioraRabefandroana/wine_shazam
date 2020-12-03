@@ -16,8 +16,19 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <ion-div id="worker-error" *ngIf="workerError">
+    Error : please check your network!
+  </ion-div>
   
-  <img *ngIf="takenPicture" id="taken-picture-img" [src]="takenPicture" alt="photo">
+  {{ url }}
+  
+  <ion-list>
+    <ion-item *ngFor="let data of wineData">
+      {{ data.post }}<br>
+      {{ data.get }}<br>
+      {{ data.hey }}
+    </ion-item>
+  </ion-list>
 
   <ion-card *ngIf="workerReady && (captureProgress > 0)">
     <ion-card-header>
@@ -26,10 +37,19 @@
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      {{ ocrResult }}
+      <ion-item>
+        text :
+        {{ ocrResult }}
+      </ion-item>
+      <ion-item>
+        wine :
+      </ion-item>     
     </ion-card-content>
   </ion-card>
+  
 
+  <img *ngIf="takenPicture" id="taken-picture-img" [src]="takenPicture" alt="photo">
+  
   <ion-fab vertical="bottom" horizontal="center" slot="fixed" > <!-- enable only when worker is ready-->
     <ion-fab-button (click)="takePicture()" [disabled]="!workerReady">
       <ion-icon name="camera" *ngIf="workerReady"></ion-icon>

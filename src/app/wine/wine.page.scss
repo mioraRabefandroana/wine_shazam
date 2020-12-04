@@ -1,0 +1,12 @@
+.wine-wrapper{
+    display: grid;
+   grid-template-areas: "image""content";
+}
+.wine-icon-wrapper{
+    border: 1px solid blue;
+    grid-area: image;
+    height: 200px;
+}
+.wine-details-wrapper{
+    grid-area: content;
+}

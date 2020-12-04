@@ -8,23 +8,30 @@
 </ion-header>
 
 <ion-content>
-  <ion-item>
-    Name : {{ wine.name }}
-  </ion-item>
-  <ion-item>
-    Description : {{ wine.description }}
-  </ion-item>
-  <ion-item>
-    Castle : {{ wine.castle }}
-  </ion-item>
-  <ion-item>
-    Bottling : {{ wine.bottling }}
-  </ion-item>
-  <ion-item>
-    Price : {{ wine.price }} € 
-  </ion-item>
-  <ion-item>
-    icon : ...
-  </ion-item>
+
+  <div class="wine-wrapper" *ngIf="wine">
+    <div class="wine-details-wrapper">
+        <div class="wine-name">
+          Name : {{ wine.name }}
+        </div >
+        <div class="wine-description">
+          Description : {{ wine.description }}
+        </div>
+        <div class="wine-castle">
+          Castle : {{ wine.castle }}
+        </div>
+        <div class="wine-bottling">
+          Bottling : {{ wine.bottling }}
+        </div>
+        <div class="wine-price">
+          Price : {{ wine.price }} € 
+        </div>
+      </div>
+
+    <div class="wine-icon-wrapper">
+      icon : ...
+    </div>
+
+  </div>
 
 </ion-content>

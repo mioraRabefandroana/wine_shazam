@@ -53,7 +53,7 @@ export class HomePage {
   
   //url: string = "https://pedago01c.univ-avignon.fr/~uapv2101281/"; //server url
 
-  takenPicture : string; //
+  photo : string; //
 
   wineData;
   wineTest: Wine;//= new Wine(1,"wine 1","this is the des of wine1","bottled in old fashion","Bordeaux chateau",100,[new WineImage(1  ,"wine1.jpg")]);
@@ -65,34 +65,16 @@ export class HomePage {
     private dataService: DataService,
     public modalController: ModalController) {
 
-      this.loadWorker();  return;
+      this.loadWorker();  
 
-      let tmpIcons = [];
-      //let i = new WineImage(1  ,"wine1.jpg");
-      //tmpIcons.push(i);
-
-      this.wineTest = new Wine(1,"wine 1","this is the des of wine1","bottled in old fashion","Bordeaux chateau",100,tmpIcons);
-      console.log(this.wineTest);
-
-      this.dataService.setWine(this.wineTest);
-
-      let wine = this.wineTest;
-      /**
-       * add wine into navigation extra parametters
-       */
-      let navigationExtras: NavigationExtras = {
-        state: {
-          wine: wine
-        }
-      };
-      // go to wine page and send the wine using navigation extra parametters
-      this.router.navigate(['/wine'], navigationExtras);
+      //### debug
+      this.getWine();
     }
 
   /*
-  * take picture by using camera
+  * shazam : take photo, scan text, get wine form server
   */
-  async takePicture()
+  async shazam()
   {
     /*
     * take photo
@@ -105,8 +87,7 @@ export class HomePage {
         source: CameraSource.Camera
       });
 
-      this.takenPicture = photo.dataUrl; // this.sanitizer.bypassSecurityTrustResourceUrl(photo && ());
-
+      this.photo = photo.dataUrl; 
     }
       /* cancelled by user */
     catch(err) {
@@ -114,9 +95,15 @@ export class HomePage {
       return;
     }
 
-    /** reconize text from the taken photo */
-    await this.recognizeTextFromImage().then(()=>{
-      this.getWine();
+    /**
+     * reconize text from the taken photo 
+     */
+    await this.recognizeTextFromImage()
+      .then(()=>{
+
+        //get wine from the server using the recognized text
+        this.getWine();
+
     }); 
   }
 
@@ -188,16 +175,17 @@ export class HomePage {
   async recognizeTextFromImage(){
     console.log("start recognizing...");
 
-    const result = await this.worker.recognize(this.takenPicture);
+    // extract text from photo
+    const result = await this.worker.recognize(this.photo);
+
+    //save the text    
+    this.ocrResult = result.data.text;
 
     
     console.log("recognizing finished!!");
-    console.log(result);
-
-    this.ocrResult = result.data.text;
-
     console.log(this.ocrResult);
 
+    //return the text
     return result.data.text
   }
 
@@ -212,59 +200,49 @@ export class HomePage {
     let postData = {
       text: this.ocrResult
     };
+
     console.log("url",this.dataService.getServerUrl());
     console.log("postData",postData);
 
     const { Http } = Plugins;
 
-    const res = Http.request({
+    const res = await Http.request({
       method: 'POST',
-      url: this.dataService.getServerUrl(),
+      url: this.dataService.getServerUrl()+'?yyyyyyy',
       headers: {},
-      data: postData
+      data: {text: 'helaaa', xx: "man"},
+      params: postData
     });
+
+    await console.log('res----',res);return;
 
     /**
      * success : create wine using data
      */
     res.then(data=>{
-      console.log(data.data);return;
-      this.wineData = data.data;
+      console.log('server response',data.data);
+
+      /**
+       * create wine from data we got from server
+       */
       let wineData = data.data;
-      /**
-       * create wine icons
-       */
-      let wineIcons = [];
-      for(let wineIcon of wineData.icons)
-      {
-        wineIcons.push( new WineImage(wineIcon.id,wineIcon.name) );
-      }
-      /**
-       * create wine
-       */
-      /*##
       let wine = new Wine(
         wineData.id,
         wineData.name,
         wineData.description,
-        wineData.botling,
+        wineData.bottling,
         wineData.castle,
         wineData.price,
-        wineIcons
-        );
-      */
-      let wine = this.wineTest;
-        /**
-         * add wine into navigation extra parametters
-         */
-        let navigationExtras: NavigationExtras = {
-          state: {
-            wine: wine
-          }
-        };
-        // go to wine page and send the wine using navigation extra parametters
-        this.router.navigate(['/wine'], navigationExtras);
+        wineData.icons
+      );
 
+      // save wine
+      this.dataService.setWine(wine);
+
+      //go to wine page
+      this.router.navigate(['/wine']);
+
+      //this.wineTest = new Wine(1,"wine 1","this is the des of wine1","bottled in old fashion","Bordeaux chateau",100,tmpIcons);  
     })
     /**
      * error

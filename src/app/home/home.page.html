@@ -48,10 +48,10 @@
   </ion-card>
   
 
-  <img *ngIf="takenPicture" id="taken-picture-img" [src]="takenPicture" alt="photo">
+  <img *ngIf="photo" id="taken-picture-img" [src]="photo" alt="photo">
   
   <ion-fab vertical="bottom" horizontal="center" slot="fixed" > <!-- enable only when worker is ready-->
-    <ion-fab-button (click)="takePicture()" [disabled]="!workerReady">
+    <ion-fab-button (click)="shazam()" [disabled]="!workerReady">
       <ion-icon name="camera" *ngIf="workerReady"></ion-icon>
       <img id="camera-loading-img" src="assets/loading_horizontal_dot.gif" alt="loading" *ngIf="!workerReady">
     </ion-fab-button>

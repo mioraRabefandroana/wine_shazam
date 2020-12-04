@@ -13,7 +13,8 @@ export class DataService {
 
 
     this.httpServerConfig = {
-      serverUrl: "http://wine_shazam/",
+      //serverUrl: "http://wine_shazam/",
+      serverUrl: "http://localhost/wine_shazam.test/test.php",
     }
   }
  

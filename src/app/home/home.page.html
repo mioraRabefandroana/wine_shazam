@@ -20,7 +20,24 @@
     Error : please check your network!
   </ion-div>
   
+  <ion-fab vertical="top" horizontal="end" slot="fixed" > 
+    <ion-fab-button (click)="showConfigForm()" >
+      <ion-icon name="construct-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+
+  
   {{ url }}
+  
+  
+  methode 0: <br>
+  
+  {{ res }}
+  
+  
+  methode 1: <br>
+  {{ res2 }}
   
   <ion-list>
     <ion-item *ngFor="let data of wineData">
@@ -56,5 +73,6 @@
       <img id="camera-loading-img" src="assets/loading_horizontal_dot.gif" alt="loading" *ngIf="!workerReady">
     </ion-fab-button>
   </ion-fab>
+  
 
 </ion-content>

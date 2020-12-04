@@ -12,6 +12,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { DataService } from '../services/data.service';
 import { Plugins } from '@capacitor/core';
+import { WineComment } from '../app.models/WineComment';
+import { User } from '../app.models/User';
 
 @Component({
   selector: 'app-wine',
@@ -27,7 +29,7 @@ export class WinePage implements OnInit {
     private router: Router,
     private dataService: DataService) {
 
-      this.debug();return;
+      //this.debug();return;
       
     /**
      * get wine sent in parametters
@@ -75,6 +77,30 @@ export class WinePage implements OnInit {
         wineData.price,
         wineData.icons
       );
+
+      if(wineData.comments)
+      {
+        for(let comment of wineData.comments)
+        {
+          let u = comment.user;
+          let user = new User(
+            u.id,
+            u.name,
+            u.firstname,
+            u.gender,
+            u.email
+          )
+
+          let c = comment.comment;
+          wine.addComment( new WineComment(
+            c.id,
+            c.date,
+            c.comment,
+            user
+          ))
+        }
+
+      }
 
       // save wine
       //this.dataService.setWine(wine);

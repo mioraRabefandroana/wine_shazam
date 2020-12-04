@@ -1,21 +1,22 @@
+import { User } from './User';
+
 export class WineComment{
     private id: number;
     private date: Date;
     private comment: string;
-    private userId: number;
+    private user: User;
     private wineId: number;
 
     constructor(
          id: number,
          date: Date,
          comment: string,
-         userId: number,
-         wineId: number){
+         user: User)
+    {
             this.id = id;
             this.date = date;
             this.comment = comment;
-            this.userId = userId;
-            this.userId = wineId;
+            this.user = user;
     }
 
     public getId(): number {
@@ -43,8 +44,8 @@ export class WineComment{
         this.comment = comment;
     }
 
-    public getUserId(): number {
-        return this.userId;
+    public getUser(): User {
+        return this.user;
     }
     /*
     public setUserId(userId: number): void {

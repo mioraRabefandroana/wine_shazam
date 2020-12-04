@@ -22,6 +22,7 @@ import { createWorker, recognize } from 'tesseract.js';
 * http import
 */
 import '@capacitor-community/http';
+import { HTTP } from '@ionic-native/http/ngx';
 
 /**
  * router and environment import
@@ -37,6 +38,9 @@ import { WineImage } from '../app.models/WineImage';
 
 //data provider
 import { DataService } from '../services/data.service'
+import { ConfigurationPage } from '../configuration/configuration.page';
+import { WineComment } from '../app.models/WineComment';
+import { User } from '../app.models/User';
 
 @Component({
   selector: 'app-home',
@@ -58,17 +62,17 @@ export class HomePage {
   wineData;
   wineTest: Wine;//= new Wine(1,"wine 1","this is the des of wine1","bottled in old fashion","Bordeaux chateau",100,[new WineImage(1  ,"wine1.jpg")]);
   workerError: boolean = false;
+  res: any;
+  res2: string;
 
   constructor(
     private sanitizer: DomSanitizer,
     private router: Router,
     private dataService: DataService,
+    private http: HTTP,
     public modalController: ModalController) {
 
-      this.loadWorker();  
-
-      //### debug
-      this.getWine();
+      this.loadWorker(); 
     }
 
   /*
@@ -76,6 +80,10 @@ export class HomePage {
   */
   async shazam()
   {
+
+    //##
+    this.getWine();return;
+
     /*
     * take photo
     */
@@ -120,6 +128,21 @@ export class HomePage {
 
     /** show modal */
     return await loginPageModal.present();
+ }
+
+  /*
+  * show login modal form 
+  */
+ async showConfigForm()
+ {
+    /** create modal */
+    const configPageModal = await this.modalController.create({
+      component: ConfigurationPage,
+      cssClass: 'config-modal'
+    });
+
+    /** show modal */
+    return await configPageModal.present();
  }
 
  /*
@@ -202,55 +225,90 @@ export class HomePage {
     };
 
     console.log("url",this.dataService.getServerUrl());
-    console.log("postData",postData);
+    //console.log("postData",postData);
 
-    const { Http } = Plugins;
-
-    const res = await Http.request({
-      method: 'POST',
-      url: this.dataService.getServerUrl()+'?yyyyyyy',
-      headers: {},
-      data: {text: 'helaaa', xx: "man"},
-      params: postData
-    });
-
-    await console.log('res----',res);return;
-
-    /**
-     * success : create wine using data
-     */
-    res.then(data=>{
-      console.log('server response',data.data);
-
+    let postParams = {
+      url: this.dataService.getServerUrl(),
+      data: {},
+      headers: {}
+    }
+    // method 0
+    this.dataService.post(postParams)
       /**
-       * create wine from data we got from server
+       * success
        */
-      let wineData = data.data;
-      let wine = new Wine(
-        wineData.id,
-        wineData.name,
-        wineData.description,
-        wineData.bottling,
-        wineData.castle,
-        wineData.price,
-        wineData.icons
-      );
+      .then( data=>{
+        console.log("data",data);
+        this.res = JSON.stringify(data.data);
+        /**
+         * create wine from data we got from server
+         */
+        //return;
+        let wineData = data.data;
+        let wine = new Wine(
+          wineData.id,
+          wineData.name,
+          wineData.description,
+          wineData.bottling,
+          wineData.castle,
+          wineData.price,
+          wineData.icons
+        );
+        console.log("-------------------------------------------");
+        if(wineData.comments)
+        {
+          for(let comment of wineData.comments)
+          {
+            let u = comment.user;
+            let user = new User(
+              u.id,
+              u.name,
+              u.firstname,
+              u.gender,
+              u.email
+            )
 
-      // save wine
-      this.dataService.setWine(wine);
+            let c = comment.comment;
+            wine.addComment( new WineComment(
+              c.id,
+              c.date,
+              c.comment,
+              user
+            ))
+          }
+        }
+          // save wine
+        this.dataService.setWine(wine);
 
-      //go to wine page
-      this.router.navigate(['/wine']);
+        //go to wine page
+        this.router.navigate(['/wine']);
+      })
+      /**
+       * error
+       */
+      .catch(err=>{
+        console.log(err);
+        return null;
+      });   
 
-      //this.wineTest = new Wine(1,"wine 1","this is the des of wine1","bottled in old fashion","Bordeaux chateau",100,tmpIcons);  
-    })
-    /**
-     * error
-     */
-    .catch(err=>{
-      console.log(err);
-      return null;
-    })
- }
+    //method 1
+    this.dataService.post(postParams,1)
+      /**
+       * success
+       */
+      .then( data=>{
+        console.log("data",data);
+        this.res2 = JSON.stringify(data.data);
+        return;
+      })
+      /**
+       * error
+       */
+      .catch(err=>{
+        console.log(err);
+        return null;
+      });   
+     
+  }
 
 }

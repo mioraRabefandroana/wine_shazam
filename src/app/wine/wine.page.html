@@ -31,7 +31,21 @@
     <div class="wine-icon-wrapper">
       icon : ...
     </div>
-
   </div>
+-------------------------------------------------------------------
+  <!--div class="comment-wrapper" *ngIf="wine"-->
+    <!--div class="comment-details-wrapper"-->
+        <ion-item class="comment-name" *ngFor="let comment of wine.comments">
+          user: {{ comment.user.name}}<br>
+          Comment : {{ comment.comment }}
+          
+        </ion-item>
+    <!--/div-->
+
+    <!--div class="comment-icon-wrapper">
+      icon : ...
+    </div>
+
+  </div-->
 
 </ion-content>

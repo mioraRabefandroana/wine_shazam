@@ -1,3 +1,4 @@
+import { WineComment } from './WineComment';
 import { WineImage } from './WineImage';
 
 export class Wine{    
@@ -8,7 +9,8 @@ export class Wine{
     private castle: string;
     private price: number;    
 
-    private icons: WineImage[];    
+    private icons: WineImage[];  
+    private comments: WineComment[] = [];
 
     constructor(
         id: number,
@@ -30,6 +32,42 @@ export class Wine{
         public getId(): number {
             return this.id;
         }
+
+
+        /**
+         * get wine icon names
+         */        
+        public getWineIconsName(): string[]{
+            let nameList = [];
+            for(let icon of this.icons)
+            {
+                nameList.push( icon.getName() );
+            }
+            return nameList;
+        }
+        /**
+         * add comment
+         * @param comment 
+         */
+        public addComment(comment)
+        {
+            this.comments.push(comment)
+        }
+        /**
+         * remove comment
+         * @param comment 
+         */
+        public removeComment(comment)
+        {
+            //TODO: supprimer un commentarire
+            //this.comments.splice(comment);
+        }
+
+        public setComments(comments)
+        {
+            this.comments = comments
+        }
+
     /*
         public setId(id: number): void {
             this.id = id;
@@ -82,15 +120,4 @@ export class Wine{
             return this.name + ': ' +this.description;
         }
 
-        /**
-         * get wine icon names
-         */        
-        public getWineIconsName(): string[]{
-            let nameList = [];
-            for(let icon of this.icons)
-            {
-                nameList.push( icon.getName() );
-            }
-            return nameList;
-        }
 }

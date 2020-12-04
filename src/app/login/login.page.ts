@@ -18,7 +18,6 @@ export class LoginPage implements OnInit {
   */
   async closeModal()
   {
-    console.log("dismqsldkfjqmdfkljqsd");
     this.modalCtrl.dismiss({
       "dismissed": true
     })

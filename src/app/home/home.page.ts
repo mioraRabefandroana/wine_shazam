@@ -41,6 +41,7 @@ import { DataService } from '../services/data.service'
 import { ConfigurationPage } from '../configuration/configuration.page';
 import { WineComment } from '../app.models/WineComment';
 import { User } from '../app.models/User';
+import { Rate } from '../app.models/Rate';
 
 @Component({
   selector: 'app-home',
@@ -71,6 +72,10 @@ export class HomePage {
     private dataService: DataService,
     private http: HTTP,
     public modalController: ModalController) {
+
+      //## debug
+      this.getWine();
+
 
       this.loadWorker(); 
     }
@@ -252,13 +257,15 @@ export class HomePage {
           wineData.bottling,
           wineData.castle,
           wineData.price,
-          wineData.icons
+          this.dataService.getServerImageDir() + wineData.image
         );
         console.log("-------------------------------------------");
+        // set comments, user and rate
         if(wineData.comments)
         {
           for(let comment of wineData.comments)
           {
+            // set comment user
             let u = comment.user;
             let user = new User(
               u.id,
@@ -267,7 +274,8 @@ export class HomePage {
               u.gender,
               u.email
             )
-
+            
+            // set comment
             let c = comment.comment;
             wine.addComment( new WineComment(
               c.id,
@@ -275,8 +283,24 @@ export class HomePage {
               c.comment,
               user
             ))
+           
+            // set comment
+            if( comment.rate )
+            {
+              let r = comment.rate;
+              wine.addRate( new Rate(
+                r.id,
+                r.date,
+                r.rate,
+                user
+              ));
+
+            }
+
           }
         }
+
+        console.log("--wine--",wine);
           // save wine
         this.dataService.setWine(wine);
 

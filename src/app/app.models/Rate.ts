@@ -1,21 +1,21 @@
+import { User } from './User';
+import { Wine } from './Wine';
+
 export class Rate{
     private id: number;
     private date: Date;
     private rate: EnumRate;
-    private userId: number;
-    private wineId: number;
+    private user: User;
 
     constructor(
          id: number,
          date: Date,
          rate: EnumRate,
-         userId: number,
-         wineId: number ){
+         user: User){
         this.id = id;
         this.date = date;
         this.rate = rate;
-        this.userId = userId;
-        this.wineId = wineId;
+        this.user = user;
     }
 
     public getId(): number {
@@ -42,20 +42,13 @@ export class Rate{
         this.rate = rate;
     }
 
-    public getUserId(): number {
-        return this.userId;
+    public getuser(): User {
+        return this.user;
     }
 
-    public setUserId(userId: number): void {
-        this.userId = userId;
+    public setuser(user: User): void {
+        this.user = user;
     }
 
-    public getWineId(): number {
-        return this.wineId;
-    }
-
-    public setWineId(wineId: number): void {
-        this.wineId = wineId;
-    }
     
 }

@@ -1,3 +1,4 @@
+/*
 .wine-wrapper{
     display: grid;
    grid-template-areas: "image""content";
@@ -10,3 +11,7 @@
 .wine-details-wrapper{
     grid-area: content;
 }
+#wine-image img{
+    height: 100%;
+}
+*/

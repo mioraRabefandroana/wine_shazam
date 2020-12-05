@@ -5,7 +5,6 @@ export class WineComment{
     private date: Date;
     private comment: string;
     private user: User;
-    private wineId: number;
 
     constructor(
          id: number,
@@ -50,14 +49,6 @@ export class WineComment{
     /*
     public setUserId(userId: number): void {
         this.userId = userId;
-    }
-*/
-    public getWineId(): number {
-        return this.wineId;
-    }
-/*
-    public setWineId(wineId: number): void {
-        this.wineId = wineId;
     }
 */
 

@@ -46,10 +46,24 @@ export class DataService {
     this.httpServerConfig.serverUrl = serverConfig.serverUrl
   }
 
+  /**
+   * get server address
+   */
   getServerUrl():string{
     return this.httpServerConfig.serverUrl;
   }
-  
+
+  /**
+   * get server image directory storage
+   */
+  getServerImageDir():string{
+    return this.getServerUrl() + "images/";
+  }
+  /**
+   * post data to server
+   * @param params 
+   * @param method 
+   */
   async post(params,method=0)
   {
     if(method == 0)

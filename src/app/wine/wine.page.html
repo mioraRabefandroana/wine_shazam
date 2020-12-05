@@ -5,47 +5,66 @@
       <ion-back-button></ion-back-button>
     </ion-buttons>
   </ion-toolbar>
+  <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 </ion-header>
 
 <ion-content>
 
-  <div class="wine-wrapper" *ngIf="wine">
-    <div class="wine-details-wrapper">
-        <div class="wine-name">
-          Name : {{ wine.name }}
-        </div >
-        <div class="wine-description">
-          Description : {{ wine.description }}
-        </div>
-        <div class="wine-castle">
-          Castle : {{ wine.castle }}
-        </div>
-        <div class="wine-bottling">
-          Bottling : {{ wine.bottling }}
-        </div>
-        <div class="wine-price">
-          Price : {{ wine.price }} € 
-        </div>
+  <ion-card class="wine-wrapper" *ngIf="wine">
+
+    <ion-img id="wine-image" [src]="wine.getImage()" (alt)="wine.getWineName()" *ngIf="wine.hasImage()" height="50"></ion-img>
+
+
+    <ion-card-header class="wine-rate" *ngIf="wine.hasBeenRated()">      
+      <ion-grid>
+        <ion-row>
+          <ion-col>  {{ wine.getRateValue() }}/5 </ion-col>
+          <ion-col class="wine-price ion-text-end">  Price : {{ wine.price }} € </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-header>    
+   
+    <ion-card-title class="wine-name ion-text-center"> {{ wine.name }} </ion-card-title>
+
+    <ion-card-content class="wine-description">      
+      <div class="wine-castle">
+        <ion-icon name="home-outline"></ion-icon> {{ wine.castle }}
       </div>
+      
+      <div class="wine-bottling" title="bottling">
+        <ion-icon name="business-outline"></ion-icon> {{ wine.bottling }}
+      </div>
+      
+      <p>
+        {{ wine.description }}
+      </p>
 
-    <div class="wine-icon-wrapper">
-      icon : ...
-    </div>
-  </div>
--------------------------------------------------------------------
-  <!--div class="comment-wrapper" *ngIf="wine"-->
-    <!--div class="comment-details-wrapper"-->
-        <ion-item class="comment-name" *ngFor="let comment of wine.comments">
-          user: {{ comment.user.name}}<br>
-          Comment : {{ comment.comment }}
-          
-        </ion-item>
-    <!--/div-->
+    </ion-card-content>
+      
+  </ion-card>
 
-    <!--div class="comment-icon-wrapper">
-      icon : ...
-    </div>
+  <ion-card>
+    <ion-item class="comment-name" *ngFor="let comment of wine.getComments()">
+      user: {{ comment.user.name}}
+      <br>
+      gender : {{ comment.user.gender }}
+      <br>
+      <br>
+      Comment : {{ comment.comment }}
+      
+    </ion-item>
 
-  </div-->
+    *******************************************
+
+    <ion-item class="comment-name" *ngFor="let data of wine.getCommentsAndRates()">
+      COMMENT: {{ data.comment.getComment()}}
+      <br>
+      <div *ngIf="data.rate">
+        RATE : {{ data.rate.getRate() }}
+      </div>
+      
+      
+    </ion-item>
+  </ion-card>
 
 </ion-content>

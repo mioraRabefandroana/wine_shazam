@@ -23,6 +23,15 @@ const routes: Routes = [
     path: 'configuration',
     loadChildren: () => import('./configuration/configuration.module').then( m => m.ConfigurationPageModule)
   },
+  {
+    path: 'tabs',
+    //redirectTo: '/tabs/wine',
+    loadChildren: () => import('./tabs/tabs.module').then( m => m.TabsPageModule)
+  },
+  {
+    path: 'comment',
+    loadChildren: () => import('./comment/comment.module').then( m => m.CommentPageModule)
+  },
 ];
 
 @NgModule({

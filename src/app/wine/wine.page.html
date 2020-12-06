@@ -1,9 +1,15 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>wine</ion-title>
+    
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="home" size="small"></ion-back-button>
     </ion-buttons>
+
+    <ion-title  class="ion-text-start">wine</ion-title>
+    <!--ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons-->
+
   </ion-toolbar>
   <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 </ion-header>
@@ -19,7 +25,7 @@
       <ion-grid>
         <ion-row>
           <ion-col>  {{ wine.getRateValue() }}/5 </ion-col>
-          <ion-col class="wine-price ion-text-end">  Price : {{ wine.price }} € </ion-col>
+          <ion-col class="wine-price ion-text-end">  {{ wine.price }} € </ion-col>
         </ion-row>
       </ion-grid>
     </ion-card-header>    
@@ -43,28 +49,5 @@
       
   </ion-card>
 
-  <ion-card>
-    <ion-item class="comment-name" *ngFor="let comment of wine.getComments()">
-      user: {{ comment.user.name}}
-      <br>
-      gender : {{ comment.user.gender }}
-      <br>
-      <br>
-      Comment : {{ comment.comment }}
-      
-    </ion-item>
-
-    *******************************************
-
-    <ion-item class="comment-name" *ngFor="let data of wine.getCommentsAndRates()">
-      COMMENT: {{ data.comment.getComment()}}
-      <br>
-      <div *ngIf="data.rate">
-        RATE : {{ data.rate.getRate() }}
-      </div>
-      
-      
-    </ion-item>
-  </ion-card>
 
 </ion-content>

@@ -72,7 +72,6 @@ export class Wine{
      */        
     public getImage(): string
     {
-        return 'http://192.168.43.181/wine_shazam/public/images/wine_image_1.png';
         return this.image;
     }
 

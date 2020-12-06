@@ -43,6 +43,8 @@ import { WineComment } from '../app.models/WineComment';
 import { User } from '../app.models/User';
 import { Rate } from '../app.models/Rate';
 
+import { HttpClient} from '@angular/common/http';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -54,7 +56,7 @@ export class HomePage {
   workerReady = false;
   captureProgress = 0;
 
-  ocrResult: string; //text result fro ocr
+  text: string; //text result fro ocr
   
   //url: string = "https://pedago01c.univ-avignon.fr/~uapv2101281/"; //server url
 
@@ -65,18 +67,23 @@ export class HomePage {
   workerError: boolean = false;
   res: any;
   res2: string;
+  wineNotFound: boolean = false;
 
   constructor(
     private sanitizer: DomSanitizer,
     private router: Router,
     private dataService: DataService,
     private http: HTTP,
-    public modalController: ModalController) {
+    public modalController: ModalController) 
+    {
+      
+      //## A enlever
+      // this.getWine();
 
-      //## debug
-      this.getWine();
+      //## A enlever
+      // this.workerReady = true;
 
-
+      //## A decommenter
       this.loadWorker(); 
     }
 
@@ -87,7 +94,7 @@ export class HomePage {
   {
 
     //##
-    this.getWine();return;
+    //this.getWine();return;
 
     /*
     * take photo
@@ -207,11 +214,11 @@ export class HomePage {
     const result = await this.worker.recognize(this.photo);
 
     //save the text    
-    this.ocrResult = result.data.text;
+    this.text = result.data.text;
 
     
     console.log("recognizing finished!!");
-    console.log(this.ocrResult);
+    console.log(this.text);
 
     //return the text
     return result.data.text
@@ -222,33 +229,48 @@ export class HomePage {
    */
  async getWine()
  {
+   if( !this.dataService.cleanString(this.text) )
+   {
+     this.wineNotFound = true;
+     return false;
+   }
+   this.wineNotFound = false;
    /**
     * post the ocr text result
     */
-    let postData = {
-      text: this.ocrResult
+    let data = {
+      "key": "text",
+      "value": this.text
     };
 
-    console.log("url",this.dataService.getServerUrl());
-    //console.log("postData",postData);
+    this.res += '<---click---->\n\n';
 
-    let postParams = {
+    console.log("url",this.dataService.getServerUrl());
+
+    let params = {
       url: this.dataService.getServerUrl(),
-      data: {},
+      data: data,
       headers: {}
     }
     // method 0
-    this.dataService.post(postParams)
+    this.dataService.sentServerRequest(params)
       /**
        * success
        */
       .then( data=>{
         console.log("data",data);
-        this.res = JSON.stringify(data.data);
+        this.res += '<<'+ JSON.stringify(data.data) +'>>';
+        
+        // check if a wine has been found
+        if(!data.data || data.data.length == 0)
+        {
+          this.wineNotFound = true;
+          return false;
+        }
+
         /**
          * create wine from data we got from server
          */
-        //return;
         let wineData = data.data;
         let wine = new Wine(
           wineData.id,
@@ -305,18 +327,20 @@ export class HomePage {
         this.dataService.setWine(wine);
 
         //go to wine page
-        this.router.navigate(['/wine']);
+        this.router.navigate(['/tabs/wine']);
+        // this.router.navigate(['/wine']);
       })
       /**
        * error
        */
       .catch(err=>{
         console.log(err);
+        this.res += '<<error : '+JSON.stringify(err)+'>>';
         return null;
       });   
 
     //method 1
-    this.dataService.post(postParams,1)
+    this.dataService.sentServerRequest(params,1)
       /**
        * success
        */
@@ -330,9 +354,11 @@ export class HomePage {
        */
       .catch(err=>{
         console.log(err);
+        this.res2 += '<< cordova-error : '+JSON.stringify(err)+'>>';
         return null;
       });   
      
+    
   }
 
 }

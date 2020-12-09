@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 /*
 * camera import
@@ -9,7 +9,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 /*
 * modal import
 */
-import { ModalController } from '@ionic/angular';
+import { IonInfiniteScroll, ModalController } from '@ionic/angular';
 import { LoginPage } from '../login/login.page';
 //import { WinePage } from '../wine/wine.page';
 
@@ -81,12 +81,13 @@ export class HomePage {
       // this.getWine();
 
       //## A enlever
-      // this.workerReady = true;
+      this.workerReady = true;
 
       //## A decommenter
-      this.loadWorker(); 
+      //this.loadWorker(); 
     }
 
+  
   /*
   * shazam : take photo, scan text, get wine form server
   */
@@ -94,7 +95,8 @@ export class HomePage {
   {
 
     //##
-    //this.getWine();return;
+    this.text = "cadi";
+    this.getWine();return;
 
     /*
     * take photo
@@ -253,7 +255,7 @@ export class HomePage {
       headers: {}
     }
     // method 0
-    this.dataService.sentServerRequest(params)
+    this.dataService.sendServerRequest(params)
       /**
        * success
        */
@@ -297,7 +299,7 @@ export class HomePage {
               u.email
             )
             
-            // set comment
+            // add comment
             let c = comment.comment;
             wine.addComment( new WineComment(
               c.id,
@@ -306,7 +308,7 @@ export class HomePage {
               user
             ))
            
-            // set comment
+            // add rate
             if( comment.rate )
             {
               let r = comment.rate;
@@ -316,7 +318,6 @@ export class HomePage {
                 r.rate,
                 user
               ));
-
             }
 
           }
@@ -340,7 +341,7 @@ export class HomePage {
       });   
 
     //method 1
-    this.dataService.sentServerRequest(params,1)
+    this.dataService.sendServerRequest(params,1)
       /**
        * success
        */

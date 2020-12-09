@@ -64,7 +64,7 @@ export class DataService {
    * @param params 
    * @param method 
    */
-  async sentServerRequest(params,method=0)
+  async sendServerRequest(params,method=0)
   {
     if(method == 0)
     {
@@ -110,5 +110,14 @@ export class DataService {
    return str.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '').trim();
  }
 
+ /**
+  * get "more comment" url request 
+  * @param wineId 
+  * @param lastCommentId 
+  */
+ getMoreCommentUrl(wineId, lastCommentId)
+ {
+   return this.getServerUrl()+"comment/more/"+wineId+"/under/"+lastCommentId;
+ }
 
 }

@@ -1,48 +1,67 @@
 <ion-header>
   <ion-toolbar>
     
-    
-    <ion-buttons slot="start" class="ion-padding">
+    <!-- back button -->
+    <ion-buttons slot="start" >
       <ion-back-button defaultHref="home" size="small"></ion-back-button>
     </ion-buttons>
 
+    <!-- title -->
     <ion-title class="ion-text-start">comment</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content >
 
-  <ion-card class="comment-name" *ngFor="let data of wine.getCommentsAndRates()">   
-    
-    <ion-card-content>   
-         
-      <ion-card-title>
-        <ion-icon name="person-outline" size="medium"></ion-icon>
-        {{ data.comment.user.getName() }}
-      </ion-card-title>
+  <!-- comment list -->
+  <div class="wine-comment-wrapper" *ngIf="wine">
+    <ion-card class="comment-name"  *ngFor="let data of wine.getCommentsAndRates()">   
       
-      <ion-card-subtitle>
-          {{ data.comment.date.date }}
-      </ion-card-subtitle>
-      
-      <ion-card-subtitle>
-        <div *ngIf="data.rate">
-          {{ data.rate.getRate() }} / 5
-        </div>
-      </ion-card-subtitle>
+      <ion-card-content>   
+           
+        <ion-card-title>
+          <ion-icon name="person-outline" size="medium"></ion-icon>
+          {{ data.comment.user.getName() }}
+        </ion-card-title>
+        
+        <ion-card-subtitle>
+            {{ data.comment.date.date }}
+        </ion-card-subtitle>
+        
+        <ion-card-subtitle>
+          <div *ngIf="data.rate">
+            {{ data.rate.getRate() }} / 5
+          </div>
+        </ion-card-subtitle>
+  
+        <p class="wine-comment">
+          {{ data.comment.getComment()}}
+        </p>
+        
+      </ion-card-content>
+  
+    </ion-card>
 
-      <p class="wine-comment">
-        {{ data.comment.getComment()}}
-      </p>
-      
-    </ion-card-content>
+  </div>
 
-  </ion-card>
+  <!--ion-button (click)="toggleInfiniteScroll()" expand="block">
+    Toggle Infinite Scroll
+  </ion-button-->
 
+  <!-- camera button -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" > 
     <ion-fab-button (click)="comment()" color="success" size="small">
       <ion-icon name="add-circle-outline" size="medium"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
+  <!-- infinite scroll -->
+  <ion-infinite-scroll threshold="0px" (ionInfinite)="loadMoreComment($event)" position="bottom">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="loading comment...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
 
 </ion-content>

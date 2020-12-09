@@ -35,7 +35,6 @@ export class WinePage implements OnInit {
      * get wine sent in parametters
      */
     this.wine = this.dataService.getWine();
-
     }
 
   ngOnInit() {

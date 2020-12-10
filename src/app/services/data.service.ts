@@ -8,6 +8,11 @@ import '@capacitor-community/http';
 import { HTTP } from '@ionic-native/http/ngx';
 import { Plugins } from '@capacitor/core';
 
+import {Md5} from 'ts-md5/dist/md5';
+import { User } from '../app.models/User';
+import { ModalController } from '@ionic/angular';
+import { LoginPage } from '../login/login.page';
+
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +20,16 @@ import { Plugins } from '@capacitor/core';
 export class DataService {
 
   private wine: Wine; //wine
+
+  // authentified user
+  private user: User = null; 
+  
   private httpServerConfig;
  
-  constructor(private http: HTTP) { 
+  constructor(
+    private http: HTTP,
+    public modalController: ModalController
+  ) { 
     this.httpServerConfig = {
       //serverUrl: "http://wine_shazam/",
       // serverUrl: "http://192.168.43.181/wine_shazam.test/test.php/",
@@ -39,6 +51,38 @@ export class DataService {
     return this.wine;
   }
 
+  /**
+   * get authetified user
+   */ 
+  getUser() : User {
+    return  this.user;
+  }
+
+  /**
+   * set authentified user
+   */
+  setUser(user: User)
+  {
+    this.user = user;
+  }
+
+  /**
+   * clear authentified user : log out
+   */
+  clearUser()
+  {
+    this.user = null;
+  }
+  
+  /**
+   * return connected user
+   */
+  userConnected()
+  {
+    return this.user;
+  }
+  
+  
   /**
    * set server configuration
    */
@@ -118,6 +162,106 @@ export class DataService {
  getMoreCommentUrl(wineId, lastCommentId)
  {
    return this.getServerUrl()+"comment/more/"+wineId+"/under/"+lastCommentId;
+ }
+
+ /**
+  * set and return new comment url
+  * @param wineId 
+  * @param userId 
+  * @param comment 
+  */
+  getSubmitCommentUrl(wineId, userId, comment)
+  {
+    return this.getServerUrl()+"comment/add/wine/"+wineId+"/user/"+userId+"/comment/"+comment;
+  }
+
+
+ /**
+  * set and return login url
+  * @param email 
+  * @param password 
+  */
+ getUserLoginUrl(email, password)
+ {
+    let url = this.getServerUrl()+"login/user/"+email+"/password/";
+    if(password)
+      url += this.hashPassword(password);
+
+    return url;
+ }
+
+ /**
+  * show login form
+  */
+ async login()
+ {
+   /** create modal */
+   const loginPageModal = await this.modalController.create({
+    component: LoginPage,
+    cssClass: 'login-modal'
+  });
+
+  /** show modal */
+  await loginPageModal.present()
+  let modalRes = await loginPageModal.onWillDismiss();
+  if(!modalRes.data.dismissed)
+    return this.getUser();
+  else
+    return false    
+ }
+
+/**
+ * set and return rate wine url
+ * @param wineId 
+ * @param userId 
+ * @param rate 
+ */
+getRateWineUrl(wineId, userId, rate=0)
+{
+  return this.getServerUrl()+'rate/set/wine/'+wineId+'/user/'+userId+'/rate/'+rate;
+}
+
+/**
+ * set and return find wine url
+ */
+getFindWineUrl(text)
+{
+  return this.getServerUrl()+'wine/text/'+text;
+}
+
+/**
+ * set and return find wine url
+ */
+getWineRateValueUrl(wineId)
+{
+  return this.getServerUrl()+'wine-rate/'+wineId;
+}
+
+/**
+ * set and return find wine url
+ */
+getNewUserRegisterUrl(name, firstname, gender, email, password=null)
+{
+  let url = this.getServerUrl()+'user/register/name/'+name+'/firstname/'+firstname+'/gender/'+gender+'/email/'+email+'/password/';
+  
+  if(password)
+    url += this.hashPassword(password);
+  
+  return url;
+}
+
+
+ /**
+  * hash password
+  * @param password 
+  */
+ hashPassword(password)
+ {
+   //TODO: appliquer le hash
+    // if(password == null || password == "")
+    //   return null;
+    // return Md5.hashStr(password);
+    return password;
  }
 
 }

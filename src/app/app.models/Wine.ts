@@ -1,7 +1,7 @@
 import { Rate } from './Rate';
 import { WineComment } from './WineComment';
 
-export class Wine{    
+export class Wine{  
     private id: number;
     private name: string;
     private description: string;
@@ -86,9 +86,14 @@ export class Wine{
      * add comment
      * @param comment 
      */
-    public addComment(comment)
+    public addComment(comment,insertAsFirst=false)
     {
-        this.comments.push(comment);
+        // add at the beginning
+        if(insertAsFirst)
+            this.comments.unshift(comment);
+        // add at the end
+        else
+            this.comments.push(comment);
     }
         /**
          * remove comment
@@ -99,8 +104,10 @@ export class Wine{
             //TODO: supprimer un commentaire
             //this.comments.splice(comment);
         }
-
         
+        /**
+         * get all comments
+         */
         public getComments()
         {
             return this.comments;
@@ -118,35 +125,23 @@ export class Wine{
          * remove rate
          * @param rate 
          */
-        public removeRate(rate)
+        public removeRate(rateId)
         {
-            //TODO: supprimer un rate
-            //this.rates.splice(rate);
+            let rateList = this.rates;
+            let tmpRateList = [];
+            for(let rate of rateList)
+            {
+                if(rate.getId() != rateId )
+                {
+                    tmpRateList.push(rate)
+                }
+            }
+            this.setRates( tmpRateList );
         }
 
         public setRates(rates)
         {
             this.rates = rates;
-        }
-
-        /**
-         * get wine rate value (average rate)
-         */
-        public getRateValue()
-        {
-            // check if wine has been rated
-            if( !this.hasBeenRated() )
-                return null;
-
-            /**
-             * compute wine rate average
-             */
-            let r = 0
-            for(let rate of this.rates )
-            {
-                r += parseInt( rate.getRate().toString() );
-            }
-            return ( r / this.rates.length );
         }
 
         /**

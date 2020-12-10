@@ -19,3 +19,36 @@
   }
 
   */
+  #new-comment-wrapper{
+    position: fixed;
+    bottom: 0;
+    width: 100% !important;
+    display: grid;
+    grid-template-columns: 28px auto 37px;
+    padding: 10px;
+    grid-column-gap: 10px;
+    border-top: 1px solid #cab6b6;
+    box-shadow: 0px 1px 7px #a59b9b;
+    background: white;
+    font-size: 14px;
+    color: #424040;
+    padding-left: 4px;
+    align-items: center;
+}
+
+#new-comment{
+  border-color: #d6d6d8 !important;
+  border-radius: 7px;
+}
+
+#new-comment-img{
+  width: 35px;
+}
+
+.comment-user{
+  font-size: 16px;
+}
+
+.wine-comment{
+  padding-left: 20px;
+}

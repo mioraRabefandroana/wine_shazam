@@ -3,7 +3,10 @@
 
     <ion-buttons slot="end">
       <!--ion-label>username</ion-label-->
-      <ion-button color="primary" (click)="showLoginForm()">log in</ion-button>
+      <ion-button color="primary" (click)="showLoginForm()" *ngIf="!dataService.getUser()">log in</ion-button>
+      <ion-button color="primary" (click)="logout()" *ngIf="dataService.getUser()">
+        {{ dataService.getUser().getFirstname() }}
+      </ion-button>
       <ion-button>
         <ion-icon  name="person-circle-outline" horizontal="right" size="large"></ion-icon> 
       </ion-button>
@@ -43,6 +46,7 @@
   methode 1: <br>
   {{ res2 }}
   
+
   <ion-list>
     <ion-item *ngFor="let data of wineData">
       {{ data.post }}<br>
@@ -76,7 +80,6 @@
       <ion-icon name="camera" *ngIf="workerReady"></ion-icon>
       <img id="camera-loading-img" src="assets/loading_horizontal_dot.gif" alt="loading" *ngIf="!workerReady">
     </ion-fab-button>
-  </ion-fab>
-  
+  </ion-fab> 
 
 </ion-content>

@@ -18,6 +18,14 @@ export class User{
             this.email = email
     }
 
+    /**
+     * toString expressions
+     */
+    public toString()
+    {
+        return this.firstname+" "+this.name;
+    }
+
     public getId(): number {
         return this.id;
     }

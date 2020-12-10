@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, NgModule, ViewChild } from '@angular/core';
 
 /*
 * camera import
@@ -50,7 +50,11 @@ import { HttpClient} from '@angular/common/http';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
+
 export class HomePage {
+
+  // authentified user
+  user: User = null;
 
   worker: Tesseract.Worker;
   workerReady = false;
@@ -69,6 +73,8 @@ export class HomePage {
   res2: string;
   wineNotFound: boolean = false;
 
+  rating = 3;
+
   constructor(
     private sanitizer: DomSanitizer,
     private router: Router,
@@ -76,7 +82,7 @@ export class HomePage {
     private http: HTTP,
     public modalController: ModalController) 
     {
-      
+      this.user = dataService.getUser();
       //## A enlever
       // this.getWine();
 
@@ -87,6 +93,10 @@ export class HomePage {
       //this.loadWorker(); 
     }
 
+    ngOnInit() {
+      console.log("initttttttttttttttttttttttt");
+    }
+  
   
   /*
   * shazam : take photo, scan text, get wine form server
@@ -134,14 +144,9 @@ export class HomePage {
   */
  async showLoginForm()
  {
-    /** create modal */
-    const loginPageModal = await this.modalController.create({
-      component: LoginPage,
-      cssClass: 'login-modal'
-    });
-
-    /** show modal */
-    return await loginPageModal.present();
+    let authentifiedUser = await this.dataService.login();
+    if(authentifiedUser)
+      this.user = authentifiedUser; 
  }
 
   /*
@@ -163,7 +168,7 @@ export class HomePage {
  * initialize OCR
  */
  async loadWorker()
-  {    
+ {    
     console.log("starting worker...");
     try{
       /**
@@ -249,13 +254,15 @@ export class HomePage {
 
     console.log("url",this.dataService.getServerUrl());
 
-    let params = {
-      url: this.dataService.getServerUrl(),
-      data: data,
-      headers: {}
-    }
+    let findWineUrl = this.dataService.getFindWineUrl(this.text);
+
+    // let params = {
+    //   url: this.dataService.getServerUrl(),
+    //   data: data,
+    //   headers: {}
+    // }
     // method 0
-    this.dataService.sendServerRequest(params)
+    this.dataService.sendServerRequest({url: findWineUrl})
       /**
        * success
        */
@@ -338,28 +345,18 @@ export class HomePage {
         console.log(err);
         this.res += '<<error : '+JSON.stringify(err)+'>>';
         return null;
-      });   
+      });       
+  }
 
-    //method 1
-    this.dataService.sendServerRequest(params,1)
-      /**
-       * success
-       */
-      .then( data=>{
-        console.log("data",data);
-        this.res2 = JSON.stringify(data.data);
-        return;
-      })
-      /**
-       * error
-       */
-      .catch(err=>{
-        console.log(err);
-        this.res2 += '<< cordova-error : '+JSON.stringify(err)+'>>';
-        return null;
-      });   
-     
-    
+  /**
+   * log out user
+   */
+  logout(){
+    if( confirm('log out?') )
+    {
+      this.user = null
+      this.dataService.clearUser();
+    }
   }
 
 }

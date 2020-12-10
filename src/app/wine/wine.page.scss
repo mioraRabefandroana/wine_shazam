@@ -19,4 +19,33 @@
 .wine-comment{
     border: 1px solid black;
 }
+#wine-img{
+    height: 345px;
+    padding-top: 6px;
+}
 
+/* rate */
+#new-rate-wrapper{
+    position: fixed;
+    bottom: 0px;
+}
+.new-rate-content{
+    display: grid;
+    padding: 14px;
+    grid-template-columns: auto auto;
+    align-items: center;
+    align-content: center;
+    background-color: #2d2b2b;
+    color: white;
+}
+#rate-btns{
+    display: grid;
+    grid-template-columns: 180px 180px;
+    align-content: center;
+    grid-column-gap: 28px;
+
+}
+
+#new-rate-value{
+    border: 1px solid white;
+}

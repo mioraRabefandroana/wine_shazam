@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonInfiniteScroll } from '@ionic/angular';
+import { AlertController, IonInfiniteScroll, ModalController, LoadingController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
 import { Rate } from '../app.models/Rate';
 import { User } from '../app.models/User';
 import { Wine } from '../app.models/Wine';
 import { WineComment } from '../app.models/WineComment';
 import { DataService } from '../services/data.service';
+import { CommentFormPage } from './comment-form/comment-form.page';
 
 @Component({
   selector: 'app-comment',
@@ -16,15 +17,20 @@ export class CommentPage implements OnInit {
   
   @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 
+  // current wine
   wine: Wine;
+
+  // last comment id: the min id
   lastCommentId: number = null;
 
-//## 09/12/2020
-  data = [1];
+  //commenting flag
+  commenting: boolean = false;
+  newComment: string = null;
 
   constructor(
     private dataService: DataService,
-    public alertController: AlertController
+    public alertController: AlertController,
+    private loadingCtl: LoadingController
   ) 
   {
     // get wine
@@ -32,53 +38,107 @@ export class CommentPage implements OnInit {
 
     // set las comment id : for loading more comment
     this.setLastCommentId();
+
   }
 
   ngOnInit() {
   }
 
   /**
-   * comment wine
+   * comment wine : show comment input
    */
   async comment()
   {
-
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Add Comment',
-      /*subHeader: 'Add your comment',
-      message: 'This is an alert message.',*/
-      inputs: [
-        {
-          name: 'name1',
-          type: 'textarea',
-          placeholder: 'Type your comment...'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancel');
-          }
-        }, 
-        {
-          text: 'OK',
-          handler: () => {
-            console.log('Confirm Ok');
-          }
-        }
-      ]
-    });
-
-    let res = await alert.present();
-    console.log(res);
-
-    
+    // set commenting flag to true
+    // user must be connected
+    if( this.dataService.getUser())
+    {
+      this.commenting = true;
+    }
+    else
+    {
+      let authentified = await this.dataService.login();
+      if(authentified)
+        this.comment();
+    }
   }
   
+  /**
+   * hide new comment input
+   */
+  async closeNewComment()
+  {
+    this.commenting = false;
+  }
+  
+  /**
+   * hide new comment input
+   */
+  async submitComment()
+  {    
+    // create new comment url
+    let newCommentUrl = this.dataService.getSubmitCommentUrl(
+      this.wine.getId(),
+      this.dataService.userConnected().getId(),
+      this.newComment
+    );
+    // submit comment to server
+    await this.dataService.sendServerRequest({ url: newCommentUrl })
+    .then(data=>{
+
+      if(data.data)
+      {
+        let commentData = data.data;
+        // create new comment
+        let newComment = new WineComment(
+          commentData.id,
+          commentData.date,
+          commentData.comment,
+          this.dataService.userConnected()
+        );        
+        
+        // add wine new comment at first index
+        this.wine.addComment(newComment, true);
+        
+        // update current wine
+        this.dataService.setWine( this.wine );
+
+        // clear data
+        this.newComment = null;
+        this.commenting = false;
+
+        // show success message
+        alert("Success: your comment has been added.");
+      }
+      else
+      {
+        console.log(data);
+        alert('An error ha occured.');
+        return false;
+      }
+
+    })
+    .catch(err=>{
+      console.log(err);
+      alert('An error ha occured.');
+      return false;
+    })
+  }
+
+
+  /**
+   * loading ...
+   */
+  async loading()
+  {
+    const loading = await this.loadingCtl.create({
+      cssClass: 'loading-class',
+      message: 'Please wait...',
+    });
+    await loading.present();
+    return loading;
+  }
+
   /**
    * load more comment from the server
    * @param event 
@@ -90,7 +150,6 @@ export class CommentPage implements OnInit {
 
       event.target.disabled = true;
 
-      // debugger;
       // set url for server request
       let moreCommentUrl = this.dataService.getMoreCommentUrl( this.wine.getId(), this.lastCommentId );
 
@@ -163,24 +222,6 @@ export class CommentPage implements OnInit {
 
       event.target.disabled = false;
     },100);
-
-
-/*
-    // debugger;
-    setTimeout(() => {
-      console.log('Done',this.data);
-      event.target.complete();
-      
-      this.data.push(1);
-      
-      console.log('Done2',this.data);
-      // App logic to determine if all data is loaded
-      // and disable the infinite scroll
-      if (this.data.length == 10) {
-        event.target.disabled = true;
-      }
-   }, 500);
-*/
 
   }
 

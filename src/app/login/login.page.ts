@@ -1,5 +1,8 @@
+import { mapToMapExpression } from '@angular/compiler/src/render3/util';
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { User } from '../app.models/User';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-login',
@@ -8,9 +11,128 @@ import { ModalController } from '@ionic/angular';
 })
 export class LoginPage implements OnInit {
 
-  constructor(private modalCtrl: ModalController) { }
+  email: string = "mra@map.fr";
+  password: string = null;
+
+  loginMode: boolean = true;
+
+  newUser = {
+    name: null,
+    firstname: null,
+    gender: 'M',
+    email: null,
+    password: null
+  };
+
+  constructor(
+    private modalCtrl: ModalController,
+    private dataService: DataService) {
+
+      this.loginMode = true;
+  }
 
   ngOnInit() {
+  }
+
+
+  /**
+   * login
+   */
+  async login()
+  {
+    let loginUrl = this.dataService.getUserLoginUrl(this.email, this.password);
+    console.log("loginUrl",loginUrl)
+    await this.dataService.sendServerRequest({url: loginUrl})
+    .then(data=>{
+      // debugger;
+      if(data.data)
+      {
+        // not valid user
+        if(!data.data.user)
+        {
+          alert("Error: email or password not valid.");
+        }
+
+        // valid user
+        else
+        {
+          // create authentified user
+          let userData = data.data.user;
+          let user = new User(
+            userData.id,
+            userData.name,
+            userData.firstname,
+            userData.gender,
+            userData.email
+          );
+
+          // save authentified user
+          this.dataService.setUser(user);
+          // close modal: go back home page
+          this.modalCtrl.dismiss({"dismissed": false});
+          return true;
+        }
+      }
+    })
+    .catch(err=>{
+      alert("an error has occured.");
+      return false;
+    })
+  }
+
+  /**
+   * create new user account : redirect to register page
+   */
+  createAccount()
+  {
+    this.loginMode = false;
+  }
+
+  /**
+   * submit new user to server
+   */
+  async register()
+  {
+    let registerUrl = this.dataService.getNewUserRegisterUrl(
+      this.newUser.name,
+      this.newUser.firstname,
+      this.newUser.gender,
+      this.newUser.email,
+      this.newUser.password
+    );
+
+    await this.dataService.sendServerRequest({ url: registerUrl })
+    .then(data=>{
+        if(data.data && data.data.status)
+        {
+          if(data.data.status == 'success')
+          {
+            alert('Your account has been created.');
+            this.loginMode = true;
+          }
+          else
+          {
+            alert('Email already used.');
+          }
+        }
+        else
+        {
+          alert("an error has occured.");
+          return false;
+        }
+    })
+    .catch(err=>{
+      console.log(err);
+      alert("an error has occured.");
+    })
+  }
+
+  /**
+   * abort register
+   */
+  async abortRegister()
+  {
+    this.loginMode = true;
   }
 
   /*
@@ -22,5 +144,7 @@ export class LoginPage implements OnInit {
       "dismissed": true
     })
   }
+
+
 
 }

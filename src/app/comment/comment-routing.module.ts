@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: CommentPage
+  },
+  {
+    path: 'comment-form',
+    loadChildren: () => import('./comment-form/comment-form.module').then( m => m.CommentFormPageModule)
   }
 ];
 

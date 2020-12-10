@@ -1,3 +1,9 @@
 .login-label-icon{
     margin-right: 10px;
 }
+
+.register-item-wrapper{
+    display: grid;
+    grid-template-columns: 104px auto;
+    align-items: center;
+}

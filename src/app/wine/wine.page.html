@@ -15,39 +15,77 @@
 </ion-header>
 
 <ion-content>
-
+  <!-- wine details-->
   <ion-card class="wine-wrapper" *ngIf="wine">
 
-    <ion-img id="wine-image" [src]="wine.getImage()" (alt)="wine.getWineName()" *ngIf="wine.hasImage()" height="50"></ion-img>
+    <!-- image -->
+    <ion-img id="wine-img" [src]="wine.getImage()" (alt)="wine.getWineName()" *ngIf="wine.hasImage()" height="50"></ion-img>
 
-
-    <ion-card-header class="wine-rate" *ngIf="wine.hasBeenRated()">      
+    <ion-card-header class="wine-rate">      
       <ion-grid>
         <ion-row>
-          <ion-col>  {{ wine.getRateValue() }}/5 </ion-col>
+          <!-- rate -->
+          <ion-col *ngIf="wineRateValue">
+            <ion-badge color="warning">
+              {{ wineRateValue }}/5 
+            </ion-badge>
+          </ion-col>
+
+          <!-- price -->
           <ion-col class="wine-price ion-text-end">  {{ wine.price }} € </ion-col>
         </ion-row>
       </ion-grid>
     </ion-card-header>    
    
+    <!-- name -->
     <ion-card-title class="wine-name ion-text-center"> {{ wine.name }} </ion-card-title>
 
-    <ion-card-content class="wine-description">      
+    <ion-card-content class="wine-description"> 
+
+      <!-- castle -->    
       <div class="wine-castle">
         <ion-icon name="home-outline"></ion-icon> {{ wine.castle }}
       </div>
       
+      <!-- bottling -->
       <div class="wine-bottling" title="bottling">
         <ion-icon name="business-outline"></ion-icon> {{ wine.bottling }}
       </div>
       
+      <!-- description -->
       <p>
         {{ wine.description }}
       </p>
 
-    </ion-card-content>
-      
+    </ion-card-content>      
   </ion-card>
+  
+  <!-- rate button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed"  *ngIf="wine && !onRating"> 
+    <ion-fab-button (click)="rate()" color="success" size="large" color="warning">
+      <ion-icon name="star-outline"></ion-icon>
+      <!--img id="new-comment-img" src="assets/new-comment.png" alt=""-->
+    </ion-fab-button>
+  </ion-fab>
 
+  <!-- rate component -->
+  <div id="new-rate-wrapper" *ngIf="wine && onRating">
+    <ion-card>
+      <div class="new-rate-content">
+        <ion-label> Rate : </ion-label>
+        <ion-input id="new-rate-value" type="number" min="1" max="5" placeholder="1-5" [(ngModel)]="newRate"></ion-input>
+      </div>
+
+      <div id="rate-btns">
+        <ion-button (click)="closeNewRate()" color="danger">
+          Cancel
+        </ion-button>        
+        <ion-button (click)="submitRate()"  id="new-rate-submit">
+          OK
+        </ion-button>
+      </div>
+    </ion-card>   
+    
+  </div>
 
 </ion-content>

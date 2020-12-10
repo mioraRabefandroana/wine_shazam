@@ -14,22 +14,63 @@
 
 <ion-content> 
 
-  <ion-card>
+  <!-- login form -->
+  <ion-card *ngIf="loginMode">
     <ion-card-content>
       <ion-item>
         <!--ion-label>username</ion-label-->
         <ion-icon class="login-label-icon" name="person-outline" size="medium"></ion-icon>
-        <ion-input type="email" placeholder="username"></ion-input>
+        <ion-input type="email" placeholder="enter your email" [(ngModel)]="email"></ion-input>
       </ion-item>
       <ion-item>
         <!--ion-label>password</ion-label-->
         <ion-icon class="login-label-icon" name="lock-closed-outline" size="medium"></ion-icon>
-        <ion-input type="password" placeholder="password"></ion-input>
+        <ion-input type="password" placeholder="password" [(ngModel)]="password"></ion-input>
       </ion-item>
 
-      <ion-button color="primary" expand="full">log in</ion-button>
-      <ion-button color="secondary" expand="full">create account</ion-button>
+      <ion-button color="primary" expand="full" (click)="login()">log in</ion-button>
+      <ion-button color="secondary" expand="full" (click)="createAccount()">create account</ion-button>
       
     </ion-card-content>
   </ion-card>
+
+  <!-- register form -->
+  <ion-card *ngIf="loginMode==false">
+    <ion-card-content>
+      <ion-item>
+        <div class="register-item-wrapper">
+          <ion-label>Name : </ion-label>
+          <ion-input type="text" placeholder="your name" [(ngModel)]="newUser.name"></ion-input>
+        </div>
+      </ion-item>
+      <ion-item>
+        <div class="register-item-wrapper">
+          <ion-label>Firstname : </ion-label>
+          <ion-input type="text" placeholder="your firstname" [(ngModel)]="newUser.firstname"></ion-input>
+        </div>
+      </ion-item>        
+      <ion-item>
+        <div class="register-item-wrapper">
+          <ion-label>Email : </ion-label>
+          <ion-input type="email" placeholder="enter your email" [(ngModel)]="newUser.email"></ion-input>
+        </div>
+      </ion-item>
+      <ion-item>
+        <div class="register-item-wrapper">
+          <ion-label>Password : </ion-label>
+          <ion-input type="password" placeholder="password" [(ngModel)]="newUser.password"></ion-input>
+        </div>
+      </ion-item>
+
+      <ion-button color="primary" expand="full" (click)="register()">Register</ion-button>
+      <ion-button color="danger" expand="full" (click)="abortRegister()">Cancel</ion-button>
+      
+    </ion-card-content>
+  </ion-card>
+
+
+
+
+
+
 </ion-content>

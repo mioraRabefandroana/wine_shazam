@@ -32,6 +32,7 @@
     "cordova-plugin-file": "^6.0.2",
     "rxjs": "~6.5.5",
     "tesseract.js": "^2.0.0-beta.2",
+    "ts-md5": "^1.2.7",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"
   },

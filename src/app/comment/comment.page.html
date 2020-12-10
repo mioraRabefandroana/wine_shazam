@@ -8,6 +8,7 @@
 
     <!-- title -->
     <ion-title class="ion-text-start">comment</ion-title>
+
   </ion-toolbar>
 </ion-header>
 
@@ -19,9 +20,9 @@
       
       <ion-card-content>   
            
-        <ion-card-title>
+        <ion-card-title class="comment-user">
           <ion-icon name="person-outline" size="medium"></ion-icon>
-          {{ data.comment.user.getName() }}
+          {{ data.comment.user.toString() }}
         </ion-card-title>
         
         <ion-card-subtitle>
@@ -44,19 +45,26 @@
 
   </div>
 
-  <!--ion-button (click)="toggleInfiniteScroll()" expand="block">
-    Toggle Infinite Scroll
-  </ion-button-->
 
-  <!-- camera button -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" > 
-    <ion-fab-button (click)="comment()" color="success" size="small">
-      <ion-icon name="add-circle-outline" size="medium"></ion-icon>
+  <!-- comment add button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed"  *ngIf="wine && !commenting"> 
+    <ion-fab-button (click)="comment()" color="success" size="large">
+      <img id="new-comment-img" src="assets/new-comment.png" alt="">
     </ion-fab-button>
   </ion-fab>
+ 
+  <!-- new comment -->
+  <div id="new-comment-wrapper" *ngIf="commenting">
+    <ion-icon name="close-circle-outline" size="large" (click)="closeNewComment()"></ion-icon>
+    <textarea name="new-comment" id="new-comment" cols="30" rows="5" placeholder="Your comment" [(ngModel)]="newComment"></textarea>
+    <div id="new-comment-submit">
+      <ion-icon name="send" size="large" (click)="submitComment()"></ion-icon>
+    </div>
+  </div>
+
 
   <!-- infinite scroll -->
-  <ion-infinite-scroll threshold="0px" (ionInfinite)="loadMoreComment($event)" position="bottom">
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreComment($event)" position="bottom">
     <ion-infinite-scroll-content
       loadingSpinner="bubbles"
       loadingText="loading comment...">
@@ -65,3 +73,4 @@
 
 
 </ion-content>
+

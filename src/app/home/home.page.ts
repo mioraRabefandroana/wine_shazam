@@ -44,6 +44,7 @@ import { User } from '../app.models/User';
 import { Rate } from '../app.models/Rate';
 
 import { HttpClient} from '@angular/common/http';
+import { threadId } from 'worker_threads';
 
 @Component({
   selector: 'app-home',
@@ -56,24 +57,26 @@ export class HomePage {
   // authentified user
   user: User = null;
 
+  // worker for ocr
   worker: Tesseract.Worker;
+  // worker state flage
   workerReady = false;
-  captureProgress = 0;
+  workerError: boolean = false;
+  // progress
+  captureProgress: number = 0;
+  recognizing: boolean = false;
 
+  // ocr text result
   text: string; //text result fro ocr
   
-  //url: string = "https://pedago01c.univ-avignon.fr/~uapv2101281/"; //server url
-
+  // the taken photo
   photo : string; //
 
-  wineData;
-  wineTest: Wine;//= new Wine(1,"wine 1","this is the des of wine1","bottled in old fashion","Bordeaux chateau",100,[new WineImage(1  ,"wine1.jpg")]);
-  workerError: boolean = false;
-  res: any;
-  res2: string;
+  // not found flag
   wineNotFound: boolean = false;
 
-  rating = 3;
+  // waiting server response flag
+  lookingForWine: boolean = false;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -82,36 +85,32 @@ export class HomePage {
     private http: HTTP,
     public modalController: ModalController) 
     {
-      this.user = dataService.getUser();
-      //## A enlever
-      // this.getWine();
+      // get connected user
+      this.user = dataService.userConnected();
 
-      //## A enlever
-      this.workerReady = true;
-
-      //## A decommenter
-      //this.loadWorker(); 
+      // initialize ocr
+      this.loadWorker(); 
     }
 
     ngOnInit() {
-      console.log("initttttttttttttttttttttttt");
+     
     }
   
   
   /*
-  * shazam : take photo, scan text, get wine form server
+  * shazam : take photo > scan text > get wine form server
   */
   async shazam()
   {
-
-    //##
-    this.text = "cadi";
-    this.getWine();return;
+    //##debug
+    // this.text = "cadi";
+    // this.getWine();return;
 
     /*
     * take photo
     */
     try {
+
       const photo = await Plugins.Camera.getPhoto({
         quality: 100,
         allowEditing: false,
@@ -123,9 +122,17 @@ export class HomePage {
     }
       /* cancelled by user */
     catch(err) {
-      console.log("no photo was taken",err);      
+      console.log("no photo was taken",err);  
+      this.dataService.log(err);    
       return;
     }
+
+    //** initialize flags for messages */
+    this.wineNotFound = false;    
+    this.lookingForWine = false; 
+
+    this.captureProgress = 1;
+
 
     /**
      * reconize text from the taken photo 
@@ -170,6 +177,7 @@ export class HomePage {
  async loadWorker()
  {    
     console.log("starting worker...");
+    this.dataService.log("starting worker..."); 
     try{
       /**
        * create worker with a logger
@@ -206,6 +214,7 @@ export class HomePage {
     catch(err)
     {
       console.log(err);
+      this.dataService.log(err); 
       this.workerError = true;
       return false;
     }
@@ -216,16 +225,27 @@ export class HomePage {
    */
   async recognizeTextFromImage(){
     console.log("start recognizing...");
+    this.dataService.log("start recognizing...");
+
+    // set recongnizing flag
+    this.recognizing = true;
+
+    await this.loadWorker();
 
     // extract text from photo
     const result = await this.worker.recognize(this.photo);
+
+    // reset recognizing flag
+    this.recognizing = false;
 
     //save the text    
     this.text = result.data.text;
 
     
     console.log("recognizing finished!!");
+    this.dataService.log("recognizing finished!!");
     console.log(this.text);
+    this.dataService.log(this.text);
 
     //return the text
     return result.data.text
@@ -236,39 +256,32 @@ export class HomePage {
    */
  async getWine()
  {
-   if( !this.dataService.cleanString(this.text) )
-   {
-     this.wineNotFound = true;
-     return false;
-   }
-   this.wineNotFound = false;
-   /**
-    * post the ocr text result
-    */
-    let data = {
-      "key": "text",
-      "value": this.text
-    };
+    // clean text
+    if( !this.dataService.cleanString(this.text) )
+    {
+      this.wineNotFound = true;
+      return false;
+    }
 
-    this.res += '<---click---->\n\n';
+    let cleanedText = this.dataService.cleanString(this.text);
 
-    console.log("url",this.dataService.getServerUrl());
+    this.dataService.log('<--cleaned text : ');
+    this.dataService.log(cleanedText);
+    console.log('<--cleaned text : ');
+    console.log(cleanedText);
+    // set resquest url
+    let findWineUrl = this.dataService.getFindWineUrl(cleanedText);
 
-    let findWineUrl = this.dataService.getFindWineUrl(this.text);
-
-    // let params = {
-    //   url: this.dataService.getServerUrl(),
-    //   data: data,
-    //   headers: {}
-    // }
-    // method 0
-    this.dataService.sendServerRequest({url: findWineUrl})
+    // set server waiting flag
+    this.lookingForWine = true; 
+    await this.dataService.sendServerRequest({url: findWineUrl})
       /**
        * success
        */
       .then( data=>{
         console.log("data",data);
-        this.res += '<<'+ JSON.stringify(data.data) +'>>';
+        this.dataService.log("data");
+        this.dataService.log(data);
         
         // check if a wine has been found
         if(!data.data || data.data.length == 0)
@@ -290,7 +303,7 @@ export class HomePage {
           wineData.price,
           this.dataService.getServerImageDir() + wineData.image
         );
-        console.log("-------------------------------------------");
+
         // set comments, user and rate
         if(wineData.comments)
         {
@@ -314,7 +327,7 @@ export class HomePage {
               c.comment,
               user
             ))
-           
+            
             // add rate
             if( comment.rate )
             {
@@ -331,21 +344,26 @@ export class HomePage {
         }
 
         console.log("--wine--",wine);
+        this.dataService.log("--wine--");
+        this.dataService.log(wine);
           // save wine
         this.dataService.setWine(wine);
 
         //go to wine page
-        this.router.navigate(['/tabs/wine']);
-        // this.router.navigate(['/wine']);
+        // this.router.navigate(['/tabs/wine']);
+        this.router.navigate(['/wine']);
       })
       /**
        * error
        */
       .catch(err=>{
         console.log(err);
-        this.res += '<<error : '+JSON.stringify(err)+'>>';
+        this.dataService.log('<<http request error>>');
+        this.dataService.log(err);
         return null;
-      });       
+      }); 
+      // set server waiting flag
+      this.lookingForWine = false;       
   }
 
   /**
@@ -357,6 +375,11 @@ export class HomePage {
       this.user = null
       this.dataService.clearUser();
     }
+  }
+
+  debug()
+  {
+    alert( this.dataService.getLog() );
   }
 
 }

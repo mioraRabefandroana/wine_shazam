@@ -26,7 +26,7 @@ const routes: Routes = [
   {
     path: 'tabs',
     //redirectTo: '/tabs/wine',
-    loadChildren: () => import('./tabs/tabs.module').then( m => m.TabsPageModule)
+    loadChildren: () => import('./tabs/tabs.module').then( m => m.TabsPageModule),
   },
   {
     path: 'comment',

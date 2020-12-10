@@ -1,8 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar> 
 
+    <!-- header -->
     <ion-buttons slot="end">
-      <!--ion-label>username</ion-label-->
       <ion-button color="primary" (click)="showLoginForm()" *ngIf="!dataService.getUser()">log in</ion-button>
       <ion-button color="primary" (click)="logout()" *ngIf="dataService.getUser()">
         {{ dataService.getUser().getFirstname() }}
@@ -10,6 +10,7 @@
       <ion-button>
         <ion-icon  name="person-circle-outline" horizontal="right" size="large"></ion-icon> 
       </ion-button>
+
     </ion-buttons>
     <ion-title>
       wine shazam      
@@ -18,68 +19,75 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="home-content">
   <ion-div id="worker-error" *ngIf="workerError">
     Error : please check your network!
   </ion-div>
   
-  <ion-fab vertical="top" horizontal="end" slot="fixed" > 
-    <ion-fab-button (click)="showConfigForm()" >
+<!--div style="text-align: center;">
+  <a href="/wine">go to wine</a><br>
+  <a href="/comment">go to comment</a><br>
+  <a href="/tabs">go to tabs</a><br>
+  <a href="/tabs/wine">go to tabs/wine</a><br>
+  <a href="/tabs/comment">go to tabs/comment</a><br>
+</div-->
+
+
+  <!-- config -->
+  <ion-fab vertical="top" horizontal="start" slot="fixed"> 
+    <ion-fab-button (click)="showConfigForm()" size="small" color="medium">
       <ion-icon name="construct-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-
-
-  <ion-card *ngIf="wineNotFound">
-    <ion-card-content color="warning">No wine has been found.</ion-card-content>
-  </ion-card>
-
-  
-  {{ url }}
-  
-  
-  methode 0: <br>
-  
-  {{ res }}
-  
-  <br><br>
-  methode 1: <br>
-  {{ res2 }}
   
 
-  <ion-list>
-    <ion-item *ngFor="let data of wineData">
-      {{ data.post }}<br>
-      {{ data.get }}<br>
-      {{ data.hey }}
-    </ion-item>
-  </ion-list>
 
-  <ion-card *ngIf="workerReady && (captureProgress > 0)">
+  <!-- not found messge-->
+  <div  *ngIf="wineNotFound" id="no-wine-found-msg">
+      Sorry, we could not find your wine.
+  </div>
+  
+  <!-- recognizing progress -->
+  <ion-card *ngIf="(workerReady && (captureProgress > 0)) || recognizing">
     <ion-card-header>
       <ion-card-title>
-        Capture progress: {{ captureProgress }}%
+        <p id="scanning-progress">          
+          scanning progress: {{ captureProgress }}%
+        </p>
       </ion-card-title>
+      <div  *ngIf="lookingForWine" id="finding-wine-msg">
+        <img class="loading-img" src="assets/loading_horizontal_dot.gif" alt="loading">
+        <p>looking for your wine</p>
+        <img class="loading-img" src="assets/loading_horizontal_dot.gif" alt="loading">
+      </div>
     </ion-card-header>
     <ion-card-content>
-      <ion-item>
-        text :
-        {{ text }}
-      </ion-item>
-      <ion-item>
-        wine :
-      </ion-item>     
+      <!-- the photo taken -->
+      <img *ngIf="photo" id="taken-picture-img" [src]="photo" alt="photo">
     </ion-card-content>
   </ion-card>
   
-
-  <img *ngIf="photo" id="taken-picture-img" [src]="photo" alt="photo">
   
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed" > <!-- enable only when worker is ready-->
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed" *ngIf="!recognizing"> <!-- enable only when worker is ready-->
     <ion-fab-button (click)="shazam()" [disabled]="!workerReady">
       <ion-icon name="camera" *ngIf="workerReady"></ion-icon>
       <img id="camera-loading-img" src="assets/loading_horizontal_dot.gif" alt="loading" *ngIf="!workerReady">
     </ion-fab-button>
   </ion-fab> 
+
+  
+  <!-- debug button -->
+  <!--ion-fab vertical="top" horizontal="end" slot="fixed"> 
+    <ion-fab-button (click)="debug()" size="small" color="danger">
+      <ion-icon name="construct-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab--> 
+
+  <!-- log -->
+  <!--ion-card>
+    <p>
+      {{ dataService.getLog() }}
+    </p>
+  </ion-card--> 
 
 </ion-content>

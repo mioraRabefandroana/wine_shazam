@@ -11,11 +11,14 @@ import { DataService } from '../services/data.service';
 })
 export class LoginPage implements OnInit {
 
+  // email and password : login
   email: string = "mra@map.fr";
   password: string = null;
 
+  // login/register mode flag
   loginMode: boolean = true;
 
+  // new user : register
   newUser = {
     name: null,
     firstname: null,
@@ -81,7 +84,7 @@ export class LoginPage implements OnInit {
   }
 
   /**
-   * create new user account : redirect to register page
+   * create new user account : show register form
    */
   createAccount()
   {
@@ -93,6 +96,7 @@ export class LoginPage implements OnInit {
    */
   async register()
   {
+    // set url request
     let registerUrl = this.dataService.getNewUserRegisterUrl(
       this.newUser.name,
       this.newUser.firstname,
@@ -101,15 +105,18 @@ export class LoginPage implements OnInit {
       this.newUser.password
     );
 
+    // submit data to server
     await this.dataService.sendServerRequest({ url: registerUrl })
     .then(data=>{
         if(data.data && data.data.status)
         {
+          // success
           if(data.data.status == 'success')
           {
             alert('Your account has been created.');
             this.loginMode = true;
           }
+          // email already used
           else
           {
             alert('Email already used.');

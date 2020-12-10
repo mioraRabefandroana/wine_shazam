@@ -25,6 +25,8 @@ export class DataService {
   private user: User = null; 
   
   private httpServerConfig;
+
+  private debugStr: string;
  
   constructor(
     private http: HTTP,
@@ -108,46 +110,40 @@ export class DataService {
    * @param params 
    * @param method 
    */
-  async sendServerRequest(params,method=0)
+  async sendServerRequest(params)
   {
-    if(method == 0)
+    console.log("----- post method 0 : capacitor community -----");
+    this.log("----- post method 0 : capacitor community -----");
+    const { Http } = Plugins;
+    console.log("<<params>>",params)
+    this.log("<<params>>");
+    this.log(params);
+    // set data to be sent by get method
+    let url = params.url;
+    if(params.data &&
+      params.data.value &&
+      params.data.key)
     {
-      console.log("----- post method 0 : capacitor community -----");
-      const { Http } = Plugins;
-      console.log("<<params>>",params)
-      // set data to be sent by get method
-      let url = params.url;
-      if(params.data &&
-        params.data.value &&
-        params.data.key)
-      {
-        //clean data
-        let value = this.cleanString( params.data.value.toString() );
-        url = url+"?"+params.data.key+"="+value;
+      //clean data
+      let value = this.cleanString( params.data.value.toString() );
+      url = url+"?"+params.data.key+"="+value;
 
-        console.log("<<url>>",url)
-      }
-        
-      // send http request
-      return Http.request({
-        method: 'GET',
-        url: url,
-        headers: params.headers || {},
-        data: {}
-      })      
+      console.log("<<url>>",url);
+      this.log("<<url>>");
+      this.log(url);
     }
-    else
-    {
-      console.log("----- post method 1 : cordova plugin-----");
-      //## TODO
-      let res = await this.http.get(params.url,{},{})
-      console.log('-->> cordova http test',res);
-      return res;
-    }
- }
+      
+    // send http request
+    return await Http.request({
+      method: 'GET',
+      url: url,
+      headers: params.headers || {},
+      data: {}
+    })
+  }
 
  /**
-  * clean string: remove special char
+  * clean string: remove special char [unless blank]
   */
  cleanString(str: string)
  {
@@ -226,7 +222,7 @@ getRateWineUrl(wineId, userId, rate=0)
  */
 getFindWineUrl(text)
 {
-  return this.getServerUrl()+'wine/text/'+text;
+  return this.getServerUrl()+'wine/text/'+this.cleanString(text);
 }
 
 /**
@@ -263,5 +259,16 @@ getNewUserRegisterUrl(name, firstname, gender, email, password=null)
     // return Md5.hashStr(password);
     return password;
  }
+
+ log(str)
+ {
+  this.debugStr += '\n----\n'+JSON.stringify(str);
+ }
+
+ getLog()
+ {
+   return this.debugStr;
+ }
+
 
 }

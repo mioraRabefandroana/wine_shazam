@@ -30,7 +30,7 @@ export class CommentPage implements OnInit {
   constructor(
     private dataService: DataService,
     public alertController: AlertController,
-    private loadingCtl: LoadingController
+    private modalCtrl: ModalController
   ) 
   {
     // get wine
@@ -49,14 +49,15 @@ export class CommentPage implements OnInit {
    */
   async comment()
   {
-    // set commenting flag to true
     // user must be connected
     if( this.dataService.getUser())
     {
+      // set commenting flag to true
       this.commenting = true;
     }
     else
     {
+      // show login form
       let authentified = await this.dataService.login();
       if(authentified)
         this.comment();
@@ -125,20 +126,6 @@ export class CommentPage implements OnInit {
     })
   }
 
-
-  /**
-   * loading ...
-   */
-  async loading()
-  {
-    const loading = await this.loadingCtl.create({
-      cssClass: 'loading-class',
-      message: 'Please wait...',
-    });
-    await loading.present();
-    return loading;
-  }
-
   /**
    * load more comment from the server
    * @param event 
@@ -148,6 +135,7 @@ export class CommentPage implements OnInit {
     // add a timout to notify user of loading more content
     setTimeout(async () => {
 
+      // disable while loading data
       event.target.disabled = true;
 
       // set url for server request
@@ -202,17 +190,7 @@ export class CommentPage implements OnInit {
           // reset last comment id
           this.setLastCommentId();
         }
-        else
-        /**
-         * there is no mmore comment
-         */
-        {
-          //TODO : à determiner ce qu'il faut faire s'il n'y en a plus
-        }
-          
-        
-      event.target.complete();
-
+        event.target.complete();
       })
       // error request
       .catch(err=>{
@@ -225,15 +203,10 @@ export class CommentPage implements OnInit {
 
   }
 
-  toggleInfiniteScroll() {
-    this.infiniteScroll.disabled = !this.infiniteScroll.disabled;
-  }
-
   /**
    * set last commentid value : the minimu id value (because id is sorted DESC)
    */
   setLastCommentId(){
-
     let commentId = this.lastCommentId || null;
     if(this.wine && this.wine.getCommentsAndRates().length>0)
     {
@@ -249,5 +222,16 @@ export class CommentPage implements OnInit {
     }
     return this.lastCommentId = commentId;
   }
+
+  
+  /*
+  * close comment modal
+  */
+ async closeModal()
+ {
+   this.modalCtrl.dismiss({
+     "dismissed": true
+   })
+ }
 
 }

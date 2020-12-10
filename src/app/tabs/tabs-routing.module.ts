@@ -26,20 +26,7 @@ const routes: Routes = [
           }
         ]
       }
-      /*,
-      {
-        path: '',
-        children: [
-          {
-            path: '',
-            loadChildren: '../wine/wine.module#WinePageModule'
-          }
-        ]
-      }
-      */
     ]
-    
-    //redirectTo: '/tabs/wine'
   }
 ];
 

@@ -12,6 +12,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { DataService } from '../services/data.service';
 import { Rate } from '../app.models/Rate';
+import { CommentPage } from '../comment/comment.page';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-wine',
@@ -35,7 +37,8 @@ export class WinePage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private dataService: DataService) 
+    private dataService: DataService,
+    private modalController: ModalController) 
   {
 
     // initialize onRating flag
@@ -174,4 +177,16 @@ export class WinePage implements OnInit {
       })
   }
 
+  /**
+    * show login form
+    */
+  async seeComment()
+  {
+    /** create modal */
+    const commentModal = await this.modalController.create({
+      component: CommentPage,
+      cssClass: 'login-modal'
+    });
+    await commentModal.present();
+  }
 }

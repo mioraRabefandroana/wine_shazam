@@ -51,3 +51,27 @@
   position: fixed;
   bottom: 0;
 }
+
+.home-content{
+  background-color: blue !important;
+}
+
+#scanning-progress{
+  text-align: center;
+}
+#no-wine-found-msg{
+  text-align: center;
+  background: red;
+  padding: 10px;
+  color: white;
+}
+#finding-wine-msg{
+  padding: 10px;
+  text-align: center;
+  display: table;
+  margin: auto;
+}
+
+.loading-img{
+  height: 23px;
+}
